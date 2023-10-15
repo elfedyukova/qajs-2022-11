@@ -26,6 +26,14 @@ describe("getTotal 100% coverage", () => {
     test("check discount 100", () => {
       expect(getTotal([{ price: 10, quantity: 10 }], 100)).toBe(0);
     });
+    test("check with two objects", () => {
+      const items = [
+        { price: 10, quantity: 1 },
+        { price: 10, quantity: 9 },
+      ];
+      const discount = 0;
+      expect(getTotal(items, discount)).toBe(100);
+    });
   });
 });
 describe("nameIsValid 100% coverage", () => {
@@ -35,12 +43,14 @@ describe("nameIsValid 100% coverage", () => {
       expect(typeof nameIsValid).toBe("function");
     });
   });
-  describe("nameIsValid check false", () => {
-    test("check nameIsValid false 1", () => {
-      expect(nameIsValid("t")).toBe(false);
-    });
-    test("check nameIsValid false number", () => {
-      expect(nameIsValid(3)).toBe(false);
+  describe("nameIsValid check test false", () => {
+    test.each`
+      name      | expected
+      ${"t"}    | ${false}
+      ${"tt t"} | ${false}
+      ${3}      | ${false}
+    `("nameIsValid($name) = $expected", ({ name, expected }) => {
+      expect(nameIsValid(name)).toBe(expected);
     });
   });
 
