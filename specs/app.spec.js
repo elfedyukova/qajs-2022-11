@@ -1,5 +1,6 @@
 import { nameIsValid, fullTrim, getTotal } from "../src/app.js";
 describe("getTotal 100% coverage", () => {
+  const items = [{ price: 10, quantity: 10 }];
   describe("getTotal check imports", () => {
     test("getTotal check import", () => {
       expect(typeof getTotal).toBe("function");
@@ -8,12 +9,10 @@ describe("getTotal 100% coverage", () => {
   });
   describe("getTotal check throw error", () => {
     test("check discount not a number", () => {
-      expect(() => getTotal([{ price: 10, quantity: 10 }], "5")).toThrow(
-        "Скидка должна быть числом",
-      );
+      expect(() => getTotal(items, "5")).toThrow("Скидка должна быть числом");
     });
     test("check discount < 0", () => {
-      expect(() => getTotal([{ price: 10, quantity: 10 }], -6)).toThrow(
+      expect(() => getTotal(items, -6)).toThrow(
         "Процент скидки не может быть отрицательным",
       );
     });
@@ -21,10 +20,13 @@ describe("getTotal 100% coverage", () => {
 
   describe("getTotal check function", () => {
     test("check discount 10", () => {
-      expect(getTotal([{ price: 10, quantity: 10 }], 10)).toBe(90);
+      expect(getTotal(items, 10)).toBe(90);
     });
     test("check discount 100", () => {
-      expect(getTotal([{ price: 10, quantity: 10 }], 100)).toBe(0);
+      expect(getTotal(items, 100)).toBe(0);
+    });
+    test("check without discount", () => {
+      expect(getTotal(items)).toBe(100);
     });
     test("check with two objects", () => {
       const items = [
@@ -33,6 +35,14 @@ describe("getTotal 100% coverage", () => {
       ];
       const discount = 0;
       expect(getTotal(items, discount)).toBe(100);
+    });
+    test("check with two objects and quantity 0", () => {
+      const items = [
+        { price: 10, quantity: 0 },
+        { price: 10, quantity: 9 },
+      ];
+      const discount = 0;
+      expect(getTotal(items, discount)).toBe(90);
     });
   });
 });
@@ -71,6 +81,16 @@ describe("fullTrim 100% coverage", () => {
     });
   });
 
+  describe("fullTrim function tests with 2 spaces", () => {
+    test.each`
+      position    | name
+      ${"start"}  | ${"  anna"}
+      ${"center"} | ${"an     na"}
+      ${"end"}    | ${"anna   "}
+    `("spaces in the $position of string trimmed", ({ name }) => {
+      expect(fullTrim(name)).not.toContain(" ");
+    });
+  });
   describe("fullTrim parametric test", () => {
     test.each`
       a           | expected
